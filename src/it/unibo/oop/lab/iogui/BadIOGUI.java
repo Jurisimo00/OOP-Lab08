@@ -5,10 +5,17 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
 import java.util.Random;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -37,8 +44,13 @@ public class BadIOGUI {
     public BadIOGUI() {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
+        final JPanel horiz = new JPanel();
+        horiz.setLayout(new BoxLayout(horiz, BoxLayout.X_AXIS));
         final JButton write = new JButton("Write on file");
-        canvas.add(write, BorderLayout.CENTER);
+        horiz.add(write);
+        final JButton read = new JButton("read");
+        horiz.add(read);
+        canvas.add(horiz, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
@@ -56,9 +68,25 @@ public class BadIOGUI {
                  */
                 try (PrintStream ps = new PrintStream(PATH)) {
                     ps.print(rng.nextInt());
+                    //java.nio.file.Files.readAllLines(Path.g);
                 } catch (FileNotFoundException e1) {
                     JOptionPane.showMessageDialog(frame, e1, "Error", JOptionPane.ERROR_MESSAGE);
                     e1.printStackTrace();
+                } catch (IOException i) {
+                    JOptionPane.showMessageDialog(frame, i, "Error", JOptionPane.ERROR_MESSAGE);
+                    i.printStackTrace();
+                }
+            }
+        });
+        read.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent arg0) {
+                try (
+                        InputStream in = new FileInputStream(PATH);
+                        DataInputStream dStream = new DataInputStream(in)) {
+                    System.out.println(dStream.readInt());
+                } catch (IOException i) {
+                    JOptionPane.showMessageDialog(frame, i, "Error", JOptionPane.ERROR_MESSAGE);
+                    i.printStackTrace();
                 }
             }
         });
@@ -86,6 +114,7 @@ public class BadIOGUI {
         /*
          * OK, ready to pull the frame onscreen
          */
+        frame.pack();
         frame.setVisible(true);
     }
 

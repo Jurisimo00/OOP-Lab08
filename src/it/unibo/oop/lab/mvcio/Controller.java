@@ -1,5 +1,18 @@
 package it.unibo.oop.lab.mvcio;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.FileSystem;
+
+import javax.swing.JOptionPane;
+
+//import org.graalvm.compiler.virtual.phases.ea.PartialEscapeBlockState.Final;
+
+//import sun.security.action.GetBooleanAction;
+
 /**
  * 
  */
@@ -27,5 +40,21 @@ public class Controller {
      * System.getProperty("file.separator"). The combined use of those methods leads
      * to a software that runs correctly on every platform.
      */
-
+    private File file = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "default.txt");
+    public void setFIle (File f) {
+        file = f;
+    }
+    public final File getFile () {
+        return file;
+    }
+    public final String getPath () {
+        return file.getPath();
+    }
+    public final void saveString (final String s) throws IOException {
+        try (PrintStream ps = new PrintStream(file)) {
+            ps.print(s);
+        } catch (FileNotFoundException f) {
+            f.printStackTrace();
+        }
+    }
 }
